@@ -21,7 +21,7 @@ provides extra information such as:
  * etc.
 
 """
-from __future__ import unicode_literals
+
 
 from collections import Iterable
 import sys
@@ -161,8 +161,8 @@ class Command(object):
                     if isinstance(value, six.binary_type):
                         value = value.decode("utf-8")
                     target.write(value)
-                    if not value.startswith('"'):
-                        target.write("\n")
+                    #if not value.startswith('"'):
+                    #    target.write("\n")
                 else:
                     target.write(value)
 
@@ -287,6 +287,7 @@ class Command(object):
         :param value: the value to check
         :return: True on succes, False otherwise
         """
+        #print("values",arg)
         if "values" not in arg:
             return True
         return value.lower() in arg["values"]
@@ -322,6 +323,16 @@ class Command(object):
         if self.iscomplete():
             return False
 
+        #print("name",self.name)
+        #print("avalue", avalue)
+        #print("atype", atype)
+        #print("self curar", self.curarg)
+        if (type(avalue) == list):
+            #print("LIST")
+            avalue[0] = avalue[0].strip('"')
+        #else:
+        #    if self.name == "header":
+        #        avalue = avalue.strip('"')
         if self.curarg is not None and "extra_arg" in self.curarg:
             if atype == self.curarg["extra_arg"]["type"]:
                 if "values" not in self.curarg["extra_arg"] \
@@ -334,10 +345,15 @@ class Command(object):
 
         failed = False
         pos = self.nextargpos
+        #print("args definition", self.args_definition)
         while pos < len(self.args_definition):
             curarg = self.args_definition[pos]
+            #print("post curarg", curarg,pos)
+            #print("tag", curarg['type'])
+            #print("atype", atype)
             if curarg["required"]:
                 if curarg["type"] == ["testlist"]:
+                    #print("testlist")
                     if atype != "test":
                         failed = True
                     elif add:
@@ -346,8 +362,11 @@ class Command(object):
                         self.arguments[curarg["name"]] += [avalue]
                 elif atype not in curarg["type"] or \
                         not self.__is_valid_value_for_arg(curarg, avalue):
+                    #print("if curarg", curarg)
+                    #print("if atype", atype, curarg["type"])
                     failed = True
                 else:
+                    #print("else")
                     self.curarg = curarg
                     self.rargs_cnt += 1
                     self.nextargpos = pos + 1
@@ -367,6 +386,7 @@ class Command(object):
             pos += 1
 
         if failed:
+            #print("avalue++",self.name, avalue)
             raise BadArgument(self.name, avalue,
                               self.args_definition[pos]["type"])
         return True

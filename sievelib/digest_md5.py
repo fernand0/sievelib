@@ -28,7 +28,7 @@ class DigestMD5(object):
 
     def __make_cnonce(self):
         ret = ""
-        for i in xrange(12):
+        for i in range(12):
             ret += chr(random.randint(0, 0xff))
         return base64.b64encode(ret)
 
@@ -55,7 +55,7 @@ class DigestMD5(object):
 
     def response(self, username, password, authz_id=''):
         self.realm = self.__params["realm"] \
-            if self.__params.has_key("realm") else ""
+            if "realm" in self.__params else ""
         self.cnonce = self.__make_cnonce()
         respvalue = self.__make_response(username, password)
 
@@ -65,7 +65,7 @@ class DigestMD5(object):
                ('realm="%s",' % self.realm) if len(self.realm) else "",
                self.__params["nonce"], self.cnonce, self.__digesturi, respvalue)
         if authz_id:
-            if type(authz_id) is unicode:
+            if type(authz_id) is str:
                 authz_id = authz_id.encode("utf-8")
             dgres += ',authzid="%s"' % authz_id
 

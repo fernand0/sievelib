@@ -10,7 +10,7 @@ a user to syntactically flawed scripts.
 
 Implementation based on <draft-martin-managesieve-12>.
 """
-from __future__ import print_function
+
 
 import base64
 import re
@@ -126,7 +126,7 @@ class Client(object):
         if not size:
             return buf
         try:
-            buf += self.sock.recv(size)
+            buf += self.sock.recv(size).decode("utf-8")
         except (socket.timeout, ssl.SSLError):
             raise Error("Failed to read %d bytes from the server" % size)
         return buf
@@ -159,7 +159,7 @@ class Client(object):
                 nval = self.sock.recv(self.read_size)
                 if not len(nval):
                     break
-                self.__read_buffer += nval
+                self.__read_buffer += nval.decode('utf-8')
             except (socket.timeout, ssl.SSLError):
                 raise Error("Failed to read data from the server")
 
@@ -222,10 +222,14 @@ class Client(object):
         """
         ret = []
         for a in args:
-            if type(a) in [str, unicode] and self.__size_expr.match(a) is None:
-                ret += ['"%s"' % a.encode('utf-8')]
+            if type(a) in [str, str] and self.__size_expr.match(a) is None:
+                #ret += ['"%s"' % a.encode('utf-8')]
+                ret += ['"%s"' % a]
                 continue
-            ret += ["%s" % str(a)]
+            if (type(a) == str):
+                ret += ['"%s"' % a]
+            else:
+                ret += ['"%s"' % a.decode("utf-8")]
         return ret
 
     def __send_command(
@@ -250,13 +254,20 @@ class Client(object):
 
         """
         tosend = name
+        #print("Command args: %s" % args)
         if len(args):
             tosend += " " + " ".join(self.__prepare_args(args))
         self.__dprint("Command: %s" % tosend)
-        self.sock.sendall("%s%s" % (tosend, CRLF))
+        #print("Command tosend: %s" % tosend)
+        #print("Command: %s" % type(tosend))
+        #print("Command: %s" % type(CRLF))
+        cad = "%s%s" % (tosend, CRLF)
+        #print("->Command: %s" % cad)
+        self.sock.sendall(cad.encode("utf-8"))
         for l in extralines:
             self.sock.sendall("%s%s" % (l, CRLF))
         code, data, content = self.__read_response(nblines)
+        #print("code, data", code, data, content)
 
         if withcontent:
             return (code, data, content)
@@ -312,10 +323,15 @@ class Client(object):
         :return: True on success, False otherwise.
         """
         if isinstance(login, six.text_type):
-            login = login.encode("utf-8")
+            login = login#.encode("utf-8")
         if isinstance(login, six.text_type):
-            password = password.encode("utf-8")
-        params = base64.b64encode('\0'.join([authz_id, login, password]))
+            password = password#.encode("utf-8")
+        #cad = '\0'.join([authz_id, login.decode("utf-8"), password])
+        cad = '\0'.join([authz_id, login, password])
+        #print("authz",authz_id)
+        #print("cad->",cad)
+        params = base64.b64encode(cad.encode("utf-8"))
+        #print("cad->",params, type(params))
         code, data = self.__send_command("AUTHENTICATE", ["PLAIN", params])
         if code == "OK":
             return True
@@ -387,15 +403,20 @@ class Client(object):
         else:
             mech_list = [authmech]
 
+        #print("srv",self.__capabilities)
+        #print("srv",srv_mechanisms)
         for mech in mech_list:
             if mech not in srv_mechanisms:
+                print("No-lala")
                 continue
             mech = mech.lower().replace("-", "_")
             auth_method = getattr(self, "_%s_authentication" % mech)
+            #print("auth-lala", auth_method)
             if auth_method(login, password, authz_id):
                 self.authenticated = True
                 return True
             return False
+        #print("-lala")
 
         self.errmsg = "No suitable mechanism found"
         return False
@@ -586,10 +607,12 @@ class Client(object):
         :param content: script's content
         :rtype: boolean
         """
-        if type(content) is unicode:
-            content = content.encode("utf-8")
+        if type(content) is str:
+            content = content#.encode("utf-8")
 
         content = "{%d+}%s%s" % (len(content), CRLF, content)
+        #print("content->",content)
+        #print("<-content->")
         code, data = \
             self.__send_command("PUTSCRIPT", [name, content])
         if code == "OK":
@@ -675,7 +698,7 @@ class Client(object):
         :param name: script's content
         :rtype: boolean
         """
-        if type(content) is unicode:
+        if type(content) is str:
             content = content.encode("utf-8")
 
         content = "{%d+}%s%s" % (len(content), CRLF, content)

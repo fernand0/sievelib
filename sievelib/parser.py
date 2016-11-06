@@ -8,7 +8,7 @@ language used to filter emails.
 This implementation is based on RFC 5228 (http://tools.ietf.org/html/rfc5228)
 
 """
-from __future__ import print_function
+
 
 import codecs
 import re
