@@ -23,6 +23,7 @@ import six
 from .digest_md5 import DigestMD5
 
 CRLF = '\r\n'
+CRLF = '\n'
 
 KNOWN_CAPABILITIES = ["IMPLEMENTATION", "SASL", "SIEVE",
                       "STARTTLS", "NOTIFY", "LANGUAGE",
@@ -222,13 +223,23 @@ class Client(object):
         """
         ret = []
         for a in args:
-            if type(a) in [str, str] and self.__size_expr.match(a) is None:
-                #ret += ['"%s"' % a.encode('utf-8')]
-                ret += ['"%s"' % a]
+            print("a",a)
+            #if type(a) in [str, str] and self.__size_expr.match(a) is None:
+            #    #ret += ['"%s"' % a.encode('utf-8')]
+            #    print("dos")
+            #    ret += ['"%s"' % a]
+            #    print(ret)
+            #    continue
+            if (a[0]=='{'):
+                print("siii")
+                ret += ['%s' % a]
                 continue
             if (type(a) == str):
+                print("uno")
                 ret += ['"%s"' % a]
+                print(ret)
             else:
+                print("ninguno")
                 ret += ['"%s"' % a.decode("utf-8")]
         return ret
 
@@ -262,8 +273,11 @@ class Client(object):
         #print("Command: %s" % type(tosend))
         #print("Command: %s" % type(CRLF))
         cad = "%s%s" % (tosend, CRLF)
-        #print("->Command: %s" % cad)
+        print("---->Command:\n%s" % cad)
+        #print("->Command: %s" % type(cad))
+        #self.sock.sendall(cad.encode("utf-8"))
         self.sock.sendall(cad.encode("utf-8"))
+        print("->Command: %s" % type(cad))
         for l in extralines:
             self.sock.sendall("%s%s" % (l, CRLF))
         code, data, content = self.__read_response(nblines)
@@ -607,11 +621,19 @@ class Client(object):
         :param content: script's content
         :rtype: boolean
         """
-        if type(content) is str:
-            content = content#.encode("utf-8")
+        #print(type(content))
+        #print(content.encode('utf-8'))
+        #if type(content) is str:
+        #    content = content.encode("utf-8")
 
-        content = "{%d+}%s%s" % (len(content), CRLF, content)
+        #content = "{%d+}%s%s" % (len(content), CRLF, content)
+        content = "{%d+}%s%s" % (len(content),CRLF, content)
+        # content has at the end another \n
+
+        #print("content->",type(content))
+        #content = content.decode('utf-8')
         #print("content->",content)
+        #print("content->",type(content))
         #print("<-content->")
         code, data = \
             self.__send_command("PUTSCRIPT", [name, content])
