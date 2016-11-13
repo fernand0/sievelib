@@ -223,7 +223,7 @@ class Client(object):
         """
         ret = []
         for a in args:
-            print("a",a)
+            #print("a",a)
             #if type(a) in [str, str] and self.__size_expr.match(a) is None:
             #    #ret += ['"%s"' % a.encode('utf-8')]
             #    print("dos")
@@ -231,15 +231,15 @@ class Client(object):
             #    print(ret)
             #    continue
             if (a[0]=='{'):
-                print("siii")
+                #print("siii")
                 ret += ['%s' % a]
                 continue
             if (type(a) == str):
-                print("uno")
+                #print("uno")
                 ret += ['"%s"' % a]
-                print(ret)
+                #print(ret)
             else:
-                print("ninguno")
+                #print("ninguno")
                 ret += ['"%s"' % a.decode("utf-8")]
         return ret
 
@@ -273,11 +273,11 @@ class Client(object):
         #print("Command: %s" % type(tosend))
         #print("Command: %s" % type(CRLF))
         cad = "%s%s" % (tosend, CRLF)
-        print("---->Command:\n%s" % cad)
+        #print("---->Command:\n%s" % cad)
         #print("->Command: %s" % type(cad))
         #self.sock.sendall(cad.encode("utf-8"))
         self.sock.sendall(cad.encode("utf-8"))
-        print("->Command: %s" % type(cad))
+        #print("->Command: %s" % type(cad))
         for l in extralines:
             self.sock.sendall("%s%s" % (l, CRLF))
         code, data, content = self.__read_response(nblines)
