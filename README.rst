@@ -1,10 +1,14 @@
+sievelib
+========
+
+
 Note for this lib
 -----------------
 
 This is an adaptation of the original lib that seems to be working ok in Python3. It needs some cleaning and, maybe, some improvements. It passes the tests.
 
-sievelib
-========
+
+Now the original README
 
 |travis| |latest-version| |downloads|
 
