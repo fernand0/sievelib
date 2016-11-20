@@ -329,7 +329,7 @@ class Command(object):
         #print("self curar", self.curarg)
         if (type(avalue) == list):
             #print("LIST")
-            avalue[0] = avalue[0].strip('"')
+            avalue[0] = avalue[0]#.strip('"')
         #else:
         #    if self.name == "header":
         #        avalue = avalue.strip('"')
@@ -386,7 +386,7 @@ class Command(object):
             pos += 1
 
         if failed:
-            #print("avalue++",self.name, avalue)
+            #print("avalue++",self.name, avalue, self.args_definition[pos])
             raise BadArgument(self.name, avalue,
                               self.args_definition[pos]["type"])
         return True

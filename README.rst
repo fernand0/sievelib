@@ -1,7 +1,13 @@
+Note for this lib
+-----------------
+
+This is an adaptation of the original lib that seems to be working ok in Python3. It needs some cleaning and, maybe, some improvements. It passes the tests.
+
 sievelib
 ========
 
 |travis| |latest-version| |downloads|
+
 
 Client-side Sieve and Managesieve library written in Python.
 

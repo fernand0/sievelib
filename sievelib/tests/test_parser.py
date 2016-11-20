@@ -62,6 +62,7 @@ class SieveTest(unittest.TestCase):
         target = six.StringIO()
         self.parser.dump(target)
         repr_ = target.getvalue()
+        print("repr",repr_)
         target.close()
         self.assertEqual(repr_, content.lstrip())
 
