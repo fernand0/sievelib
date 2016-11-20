@@ -9,6 +9,7 @@ This is an adaptation of the original lib that seems to be working ok in Python3
 
 
 Now the original README
+-----------------------
 
 |travis| |latest-version| |downloads|
 
