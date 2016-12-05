@@ -131,7 +131,7 @@ class FiltersSet(object):
         #print("condition, parent, tag", condition, parent, tag)
         #condition = condition[2:] + condition[:2]
         if tag is None:
-            tag = condition[1]
+            tag = condition[0]
         #print("condition, parent, tag", condition, parent, tag)
         cmd = get_command_instance("header", parent)
         #print("tag",tag)
@@ -139,7 +139,7 @@ class FiltersSet(object):
         #print("cmd",cmd)
         cmd.check_next_arg("tag", tag)
         #cmd.check_next_arg("string", condition[0])#.strip('"'))
-        cmd.check_next_arg("string", self.__quote_if_necessary(condition[0]))
+        cmd.check_next_arg("string", self.__quote_if_necessary(condition[1]))
         cmd.check_next_arg("string", self.__quote_if_necessary(condition[2]))
         #cmd.check_next_arg("string", condition[2].strip('"'))
         #print("Cmd++",cmd)

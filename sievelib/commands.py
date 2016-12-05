@@ -345,9 +345,12 @@ class Command(object):
 
         failed = False
         pos = self.nextargpos
+        #print("pos",pos,len(self.args_definition))
+        #print("args",self.args_definition)
         #print("args definition", self.args_definition)
         while pos < len(self.args_definition):
             curarg = self.args_definition[pos]
+            #print("args",pos, self.nextargpos, self.args_definition[pos])
             #print("post curarg", curarg,pos)
             #print("tag", curarg['type'])
             #print("atype", atype)
@@ -356,14 +359,18 @@ class Command(object):
                     #print("testlist")
                     if atype != "test":
                         failed = True
+                        #print("failed 1")
                     elif add:
                         if not curarg["name"] in self.arguments:
                             self.arguments[curarg["name"]] = []
                         self.arguments[curarg["name"]] += [avalue]
                 elif atype not in curarg["type"] or \
                         not self.__is_valid_value_for_arg(curarg, avalue):
-                    #print("if curarg", curarg)
-                    #print("if atype", atype, curarg["type"])
+                    #print("curarg", curarg)
+                    #print("if curarg", curarg["type"],curarg["required"])
+                    #print("if atype", atype, curarg["type"], atype not in curarg["type"])
+                    #print("self", self.__is_valid_value_for_arg(curarg, avalue))
+                    #print("failed 2")
                     failed = True
                 else:
                     #print("else")
@@ -374,7 +381,9 @@ class Command(object):
                         self.arguments[curarg["name"]] = avalue
                 break
 
+            #print("atype", atype, curarg["type"])
             if atype in curarg["type"]:
+                #print("atype", atype, curarg["type"])
                 if self.__is_valid_value_for_arg(curarg, avalue):
                     if "extra_arg" in curarg:
                         self.curarg = curarg

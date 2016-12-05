@@ -421,7 +421,7 @@ class Client(object):
         #print("srv",srv_mechanisms)
         for mech in mech_list:
             if mech not in srv_mechanisms:
-                print("No-lala")
+                #print("No-lala")
                 continue
             mech = mech.lower().replace("-", "_")
             auth_method = getattr(self, "_%s_authentication" % mech)
